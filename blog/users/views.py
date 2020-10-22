@@ -12,7 +12,7 @@ import re
 from users.models import User
 from django.db import DatabaseError
 from django.urls import reverse
-
+from django.contrib.auth import login
 
 
 class RegisterView(View):
@@ -58,10 +58,19 @@ class RegisterView(View):
         except DatabaseError as e:
             logging.error(e)
             return HttpResponseBadRequest("注册失败")
+        # 实现状态保持
+        login(request, user)
+
         # 4.返回：重定向到首页
         # redirect是进行重定向
         # reverse是可以通过namespace:name来获取到视图所对应的路由
-        return redirect(reverse("home:index"))
+        response = redirect(reverse("home:index"))
+        # 设置cookie
+        # 登录状态，会话结束后自动过期
+        response.set_cookie("is_login", True)
+        # 设置用户名有效期一个月
+        response.set_cookie("username", user.username)
+        return response
 
 
 class ImageCodeView(View):
