@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # 注册用户模块应用
     'users.apps.UsersConfig',
+    # 注册首页应用
+    'home.apps.HomeConfig',
 ]
 
 MIDDLEWARE = [

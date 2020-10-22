@@ -20,4 +20,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # include 参数1为元组（子应用的路由，子应用名称） 参数2 namespace 设置命名空间
     path("", include(("users.urls", "users"), namespace="users")),
+    path('', include(("home.urls","home"), namespace="home")),
 ]
