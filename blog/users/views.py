@@ -12,7 +12,7 @@ import re
 from users.models import User
 from django.db import DatabaseError
 from django.urls import reverse
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 
 
 class RegisterView(View):
@@ -183,6 +183,15 @@ class LoginView(View):
         return response
 
 
+class LogoutView(View):
+    def get(self, request):
+        # 清理session
+        logout(request)
+        # 退出登录，重定向到登录页
+        response = redirect(reverse("home:index"))
+        # 退出时清除cookie中的登陆状态
+        response.delete_cookie("is_login")
+        return response
 
 
 
