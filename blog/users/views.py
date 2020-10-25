@@ -13,6 +13,7 @@ from users.models import User
 from django.db import DatabaseError
 from django.urls import reverse
 from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 class RegisterView(View):
@@ -163,8 +164,14 @@ class LoginView(View):
         # 3处理
         # 实现状态保持
         login(request, user)
+
         # 响应登陆结果
-        response = redirect(reverse("home:index"))
+        # 根据next参数来进行页面的跳转 http://127.0.0.1:8000/accounts/login/?next=/center/
+        next = request.GET.get("next")
+        if next:
+            response = redirect(next)
+        else:
+            response = redirect(reverse("home:index"))
         # 设置状态保持周期
         if remember != "on":
             # 没有记住用户信息：浏览器会话结束就过期
@@ -246,3 +253,20 @@ class ForgetPasswordView(View):
         # 4.返回响应
         return response
 
+
+# LoginRequiredMixin 如果用户未登录的话，则会进行默认的跳转
+# 默认的跳转链接是：http://127.0.0.1:8000/accounts/login/?next=/xxxx/
+class UserCenterView(LoginRequiredMixin, View):
+    """用户中心"""
+    def get(self, request):
+        """页面展示"""
+        # 获取用户信息
+        user = request.user
+        # 组织模板进行渲染数据
+        context = {
+            "username": user.username,
+            "mobile":user.mobile,
+            "avatar" :user.avatar.url if user.avatar else None,
+            "user_desc": user.user_desc
+        }
+        return render(request, "center.html", context=context)
