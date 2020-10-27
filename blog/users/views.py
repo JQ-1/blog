@@ -14,7 +14,7 @@ from django.db import DatabaseError
 from django.urls import reverse
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
-import json
+from home.models import ArticleCategory
 
 
 class RegisterView(View):
@@ -301,4 +301,16 @@ class WriteBlogView(LoginRequiredMixin, View):
     """写博客"""
     def get(self, request):
         """写博客页面展示"""
-        return render(request, "write_blog.html")
+        # 获取博客分类信息
+        categories = ArticleCategory.objects.all()
+        context = {
+            "categories": categories
+        }
+        return render(request, "write_blog.html", context=context)
+
+
+
+
+
+
+
