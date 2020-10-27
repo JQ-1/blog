@@ -14,6 +14,7 @@ from django.db import DatabaseError
 from django.urls import reverse
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
+import json
 
 
 class RegisterView(View):
@@ -270,3 +271,34 @@ class UserCenterView(LoginRequiredMixin, View):
             "user_desc": user.user_desc
         }
         return render(request, "center.html", context=context)
+
+    def post(self, request):
+        # 1.接收数据
+        user = request.user
+        # 如果用户没有填写，则使用原用户名
+        username = request.POST.get("username", user.username)
+        user_desc = request.POST.get("desc", user.user_desc)
+        avatar = request.FILES.get("avatar")
+        # 2.修改数据库数据
+        try:
+            user.username = username
+            user.user_desc = user_desc
+            if avatar:
+                user.avatar = avatar
+            user.save()
+        except Exception as e:
+            logger.error(e)
+            return HttpResponseBadRequest("更新失败，请稍后再试")
+        # 3.返回响应，刷新页面
+        response = redirect(reverse("users:center"))
+        # 更新cookie信息
+        # username = json.dumps(username)
+        response.set_cookie("username", username, max_age=30*24*3600)
+        return response
+
+
+class WriteBlogView(LoginRequiredMixin, View):
+    """写博客"""
+    def get(self, request):
+        """写博客页面展示"""
+        return render(request, "write_blog.html")

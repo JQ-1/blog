@@ -116,10 +116,10 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
-
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
+# 语言
+LANGUAGE_CODE = 'zh-Hans'
+# 时区
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 
@@ -204,8 +204,10 @@ AUTH_USER_MODEL = 'users.User'
 # 修改系统的未登录跳转链接
 LOGIN_URL = '/login/'
 
-
-
+# 设置上传的图片保存到media
+MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
+# 图片的统一路由
+MEDIA_URL = "/media/"
 
 
 
