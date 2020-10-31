@@ -64,7 +64,7 @@ class DetailView(View):
         try:
             article = Article.objects.get(id=id)
         except Article.DoesNotExist:
-            pass
+            return render(request, '404.html')
         # 3.查询分类数据
         categories = ArticleCategory.objects.all()
         # 4.组织模板数据
