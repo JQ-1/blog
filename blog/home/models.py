@@ -59,7 +59,24 @@ class Article(models.Model):
         return self.title
 
 
+class Comment(models.Model):
+    # 评论内容
+    content = models.TextField()
+    # 评论的文章
+    # SET_NULL: 置空模式，删除的时候，外键字段被设置为空，前提就是blank=True, null=True,定义该字段的时候，允许为空。
+    article = models.ForeignKey(Article, on_delete=models.SET_NULL, null=True)
+    # 发表评论的用户
+    user = models.ForeignKey("users.User", on_delete=models.SET_NULL, null=True)
+    # 评论发布时间
+    created = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return self.article.title
+
+    class Meta:
+        db_table = "tb_comment"
+        verbose_name = "评论管理"
+        verbose_name_plural = verbose_name
 
 
 
